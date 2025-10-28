@@ -1,6 +1,26 @@
-##Ce fichier sert de main pour le project, il regroupe toutes les étapes
+##Main project file
 
-##Nettoyage des données
+##Import all necessary functions
+import pandas as pd
+from nettoyage import broken_network
+
+##Import dataframe
+network_df = pd.read_excel('cas pratique _ planification de raccordement/reseau_en_arbre.xlsx')
+
+##Dataframe preparation
+network_df['nb_maisons'] = network_df['nb_maisons'].astype(int)
+network_df['id_batiment'] = network_df['id_batiment'].astype(str)
+network_df['infra_id'] = network_df['infra_id'].astype(str)
+network_df['infra_type'] = network_df['infra_type'].astype(str)
+network_df['longueur'] = network_df['longueur'].astype(float)
+
+##Cleaning Data
+network_df_2 = network_df.drop_duplicates()
+broken_network_df,list_id_batiment,state_batiment = broken_network(network_df_2)
+
+##Create modelisation files
+state_df=pd.DataFrame({"id_batiment": list_id_batiment, "state_batiment" : state_batiment})
+state_df.to_excel('modelisation_files/etat_batiment.xlsx', index=False)
 
 ##Modélisation
 
