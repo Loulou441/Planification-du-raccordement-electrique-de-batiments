@@ -2,7 +2,7 @@
 
 ##Import all necessary functions
 import pandas as pd
-from nettoyage import broken_network
+from cleaning_data import broken_network
 
 ##Import dataframe
 network_df = pd.read_excel('cas pratique _ planification de raccordement/reseau_en_arbre.xlsx')
