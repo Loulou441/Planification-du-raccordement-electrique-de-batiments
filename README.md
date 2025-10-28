@@ -8,7 +8,7 @@ L'objectif est de rétablir rapidement la connexion pour le plus grand nombre d'
 Photo de Qgis
 
 ## Résolution du problème
-### Recherche et définition des KPIs
+### Première approche
 --> Questions qu'on s'est posé
 ### Etape nettoyage et complétion des données
 La première étape pour bien résoudre le problème a été de...
