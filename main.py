@@ -31,5 +31,5 @@ graph = LinearGraph()
 graph.build_from_csv("modelisation_files/network_remastered.xlsx")
 
 ##Exploration et résultat
-list_bat_to_repare = final_network["id_batiment"]
+list_bat_to_repare = final_network["id_batiment"].drop_duplicates()
 print(list_bat_to_repare)
