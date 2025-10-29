@@ -1,6 +1,6 @@
 ##Creating infra class
 class Infra :
-    def __init__(self, infra_id, lengh, infra_type, longueur) :
+    def __init__(self, infra_id, infra_type, longueur) :
         self.infra_id = infra_id
         self.lengh = lengh
         self.infra_type = infra_type
