@@ -15,16 +15,30 @@ En étudiant le fichier excel fourni par le client, nous nous sommes rendus comp
 Nous avons donc décidé de supprimer les-dits doublons, de ne plus prendre en compte les batiments encore opérationnels et de créer deux fichiers à partir du dataframe initial.
 Le premier, nommé infra, regroupe les informations sur les infrastructures, avec notomment le nombre de maisons que chaque infrastructure touche.
 Le deuxième, nommé batiment, groupe les bâtiments avec notamment pour chacun une liste des infrastrutures qui sont nécessaires pour acheminer l'électrcité jusqu'à ce bâtiment.
-Ce sont sur ces deux dataframes que se base la suite de notre projet.
+Ce sont sur ces deux dataframes que se base la suite de notre projet et on peut maintenant réfléchir à la création de notre métrique.
 
 ### Première approche naïve
---> Questions qu'on s'est posées :
-- Est ce que le coût est égal à la longueur de l'infra (c'est plus l'infra est longue plus c'est coûteux?)
-- Quel bâtiment est prioritaire à ? comment prioriser ? 
-- 
+Dès le début du projet, il nous est venu plusieurs questions pour le client:
+- Est-ce que l'on considère que le coût de reconstruction est proportionnel à la longueur de l'infrastructure? 
+- Le but est de raccorder un maximum d'habitants. Or cette donnée n'apparait pas dans les fichiers, seul le nombre de maison par batiments est présent. Peut-on considérer le nombre d'habitants comme le nombre de maisons?
+- Y'a t-il des bâtiments prioritaires?
+Malheureusement, pour cette première approche, le client n'était pas disponible. Nous avons donc dû faire avec nos données telles qu'elles étaient.
+Nous avons donc pris pour métrique première la difficulté liée à l'infrastucture telle que:
+
+difficulty(infra) = la longueur de l'infra / le nombre d'habitations liées à cette infra
 
 ### Deuxième approche 
-La première étape pour bien résoudre le problème a été de...
+La deuxième approche est venue grâce à une discussion avec le client où nous avons eu des réponses. Celui-ci nous a confirmé que le nombre d'habitants est en fait le nombre de maisons. Nous avons également réalisé que la difficulté de l'infrastructure n'est pas la meilleure métrique pour évaluer la priorité des infrastrustures. En effet, une infrastructure en amont réparée seule ne donne pas forcément accès de manière immédiate à l'électricité. Il faut donc réfléchir autrement à comment prioriser les infrastructures. 
+C'est là qu'intervient la difficulté bâtiment. Pour qu'un bâtimant retrouve l'électricité, il faut impérativement que toutes les infrastructures qui mènent à ce bâtiment soient opérationnelles. Ainsi, plutôt que de prendre chaque infrastructure individuellement, nous avons décidé de mesurer la difficulté pour chaque bâtiment telle que:
+
+difficulty(batiment) = sum(difficulty(infra) pour toutes les infrastructures menant à ce bâtiment) 
+
+De cette manière, on peut construire un premier algorithme: 
+1. On liste tous les bâtiments à réparer
+2. On crée une liste vide qui va recueillir les bâtiments au fur et à mesure qu'on les répare et va ainsi correspondre à notre ordre de priorité
+3. Tant que la liste des bâtiments à réparer n'est pas vide, on calcule leur difficulté de réparation, on sélectionne le bâtiment avec la difficulté la plus faible, on le "répare", c'est à dire qu'on répare toutes ses infrastructures, on le range dans la liste des priorités et on recommence
+
+Quand tout a été réparé, on regarde la liste de priorité et on peut déterminer les différentes phases de reconstruction.
 
 ### Troisème approche avec les données complètes
 Ce que ça a modifié dans les calculs de difficultés
