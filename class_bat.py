@@ -6,11 +6,10 @@ class Batiment:
     self.id = id
     self.list_infra = list_infra
 
-#Instances attibutes to be define with self
   def get_building_difficulty(self):
         for infra in self.list_infra:
-           difficulty += infra.get_infra_difficulty()
+           difficulty = infra.get_infra_difficulty()
         return difficulty
   
-  def __lt__(self):
-     return 0
+  def __lt__(self, other_building):
+    return self.get_building_difficulty() < other_building.get_building_difficulty()
