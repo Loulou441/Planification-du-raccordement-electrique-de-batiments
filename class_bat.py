@@ -8,8 +8,8 @@ class Batiment:
 
 #Instances attibutes to be define with self
   def get_building_difficulty(self):
-        for i in self.list_infra:
-           difficulty += get_infra_difficulty(i)
+        for infra in self.list_infra:
+           difficulty += infra.get_infra_difficulty()
         return difficulty
   
   def __lt__(self):
