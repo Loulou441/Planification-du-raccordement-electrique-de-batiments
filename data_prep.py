@@ -13,8 +13,6 @@ def broken_network(network_df):
             state_batiment.append("to_repare")
         else:
             state_batiment.append("intact")
-    
-    broken_network_df = network_df[network_df['id_batiment'].isin(set_id_broken_batiment)]
 
     return broken_network_df,list_id_batiment,state_batiment
 
