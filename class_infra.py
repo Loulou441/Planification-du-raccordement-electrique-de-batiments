@@ -5,9 +5,8 @@ class Infra :
         self.lengh = lengh
         self.infra_type = infra_type
         self.longueur = longueur
-    def repair_infra 
-
-    def (self):    # méthode
-        print(f",  {self.nom} et j'ai {self.age} ans.")
-
+        
+    def repair_infra(self)
+    def get_infra_difficulty(self)
+    def __radd__ (self):   
 
