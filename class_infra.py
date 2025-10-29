@@ -1,5 +1,5 @@
 ##Creating infra class
-class :
+class Infra :
     def __init__(infra_id, lengh, infra_type, longueur:
         self.infra_id = infra_id
         self.lengh = lengh
