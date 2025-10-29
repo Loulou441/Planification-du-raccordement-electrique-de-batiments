@@ -7,7 +7,7 @@ class Infra :
         self.nb_maisons = nb_maisons 
         
     def repair_infra(self):
-        return 0
+        self.infra_type = "infra_intacte"
     
     def get_infra_difficulty(self):
         difficulty = self.lengh / self.nb_maisons
