@@ -12,13 +12,16 @@ Photo de Qgis
 ### Etape nettoyage et préparation des données
 Une étape essentielle et nécessaire a été de nettoyer les données.
 En étudiant le fichier excel fourni par le client, nous nous sommes rendus compte que des doublons étaient présents et que les données n'étaient pas présentées sous la meilleure forme possible. 
-Nous avons donc décidés de supprimer les-dits doublons, de ne plus prendre en compte les batiments encore opérationnels et de créer deux fichiers à partir du dataframe initial.
+Nous avons donc décidé de supprimer les-dits doublons, de ne plus prendre en compte les batiments encore opérationnels et de créer deux fichiers à partir du dataframe initial.
 Le premier, nommé infra, regroupe les informations sur les infrastructures, avec notomment le nombre de maisons que chaque infrastructure touche.
 Le deuxième, nommé batiment, groupe les bâtiments avec notamment pour chacun une liste des infrastrutures qui sont nécessaires pour acheminer l'électrcité jusqu'à ce bâtiment.
 Ce sont sur ces deux dataframes que se base la suite de notre projet.
 
 ### Première approche naïve
---> Questions qu'on s'est posé
+--> Questions qu'on s'est posées :
+- Est ce que le coût est égal à la longueur de l'infra (c'est plus l'infra est longue plus c'est coûteux?)
+- Quel bâtiment est prioritaire à ? comment prioriser ? 
+- 
 
 ### Deuxième approche 
 La première étape pour bien résoudre le problème a été de...
@@ -27,7 +30,7 @@ La première étape pour bien résoudre le problème a été de...
 Ce que ça a modifié dans les calculs de difficultés
 
 ### Conclusion 
-après avoir exécuter le code...
+après avoir exécuté le code...
 Phase 1:
 Phase 2:
 Phase 3:
