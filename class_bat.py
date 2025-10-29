@@ -5,7 +5,7 @@ class Batiment:
     self.id = id
     self.list_infra = list_infra
 
-    #Instances attibutes to be define with self
+#Instances attibutes to be define with self
   def get_building_difficulty(self):
       return 0
   

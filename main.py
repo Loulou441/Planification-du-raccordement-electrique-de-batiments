@@ -2,7 +2,7 @@
 
 ##Import all necessary functions
 import pandas as pd
-from data_prep import broken_network
+from data_prep import broken_network, summary_batiment, summary_infra
 from modelisation import LinearGraph
 
 ##Import dataframe
@@ -18,10 +18,12 @@ network_df['longueur'] = network_df['longueur'].astype(float)
 ##Cleaning Data
 network_df_unique = network_df.drop_duplicates()
 broken_network_df,list_id_batiment,state_batiment = broken_network(network_df_unique)
-##Add potentially other preparation
+infra_df = summary_infra(broken_network_df)
+batiment_df = summary_batiment(broken_network_df)
 final_network = broken_network_df
 final_network.to_excel('modelisation_files/network_remastered.xlsx')
-
+infra_df.to_excel('modelisation_files/infra.xlsx')
+batiment_df.to_excel('modelisation_files/batiment.xlsx')
 ##Create files for QGIS
 state_df=pd.DataFrame({"id_batiment": list_id_batiment, "state_batiment" : state_batiment})
 state_df.to_excel('modelisation_files/etat_batiment.xlsx', index=False)

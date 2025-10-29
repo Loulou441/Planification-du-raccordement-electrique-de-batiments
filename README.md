@@ -1,8 +1,3 @@
-# Questions au client
-1. serait-il possible d'obtenir le type d'infrasture ainsi que le coût de réparation lié à chaque type et le temps de la réparation?
-2. Le nombre d'habitants n'apparait pas. Il faudrait les données démographique liées à chaque bâtiment afin de pouvoir adapter le coût total.
-3. Dans une ville, certains bâtiments sont plus importants que d'autres. Existe-il une liste des bâtiments à raccorder en priorité?
-
 # Planification du raccordement électrique de bâtiments
 par Hamsatou Moussa Rabiou Kalla, Khadidja Berreksi, Abdenour Touat, Manon Tessier
 
