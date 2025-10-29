@@ -1,14 +1,14 @@
 ##Creating infra class
 class Infra :
-    def __init__(self, infra_id, lengh, infra_type, nb_maisons, infra_type_construction) :
+    def __init__(self, infra_id, lengh, infra_etat, nb_maisons, infra_type) :
         self.infra_id = infra_id
         self.lengh = lengh
-        self.infra_type = infra_type
+        self.infra_etat = infra_etat
         self.nb_maisons = nb_maisons
-        self.infra_type_construction = 0 
+        self.infra_type = infra_type
         
     def repair_infra(self):
-        self.infra_type = "infra_intacte"
+        self.infra_etat = "infra_intacte"
     
     def get_infra_difficulty(self):
         difficulty = self.lengh / self.nb_maisons
@@ -16,15 +16,5 @@ class Infra :
     
     def __radd__ (self): 
         return 0
-    
-    class Type_Infra :
-        def __init__(self, nom, prix, duree):
-            self.nom = nom
-            self.prix = prix
-            self.duree = duree
-
-        def get_type_infra_prix(self):
-            return self.prix
-        
         
 
