@@ -4,7 +4,7 @@ class Infra :
         self.infra_id = infra_id
         self.lengh = lengh
         self.infra_type = infra_type
-        self.longueur = longueur
+        self.nb_maisons = nb.maisons 
         
     def repair_infra(self):
         return 0
