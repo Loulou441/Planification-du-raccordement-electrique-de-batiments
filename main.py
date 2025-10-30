@@ -2,7 +2,7 @@
 
 ##Import all necessary functions
 import pandas as pd
-from data_prep import broken_network
+from data_prep import broken_network, get_right_price, get_right_time
 from modelisation import LinearGraph
 from simulation import ProjectManager
 
@@ -25,7 +25,7 @@ network_df_unique = network_df.drop_duplicates()
 broken_network_df,list_id_batiment,state_batiment = broken_network(network_df_unique)
 broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 
-## Joining table to get all extra info on buildings and infras including prices
+## Get all extra info on buildings and infras including prices and time to repair
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
 broken_network_df_4 = broken_network_df_3.merge(info_prix, on='type_infra', how = "left")
@@ -43,6 +43,12 @@ graph = LinearGraph()
 graph.build_from_csv("modelisation_files/network_remastered.xlsx")
 
 ##Exploration et résultat
-pm = ProjectManager.from_dataframe(final_network)
-ranked_buildings = pm.simulate_fixing(verbose=True)
-ranked_buildings
+##Traitement de l'hospital
+id_bat_hospital = "".join(map(str, set(final_network[final_network['type_batiment']=='hôpital']['id_batiment'])))
+print(id_bat_hospital)
+list_infra_hospital = list(final_network[final_network['id_batiment']==id_bat_hospital]['infra_id'])
+print(list_infra_hospital)
+
+#pm = ProjectManager.from_dataframe(final_network)
+#ranked_buildings = pm.simulate_fixing(verbose=True)
+#ranked_buildings

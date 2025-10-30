@@ -1,9 +1,11 @@
 import pandas as pd
+from constant import prix_aerien,prix_fourreau,prix_semi_aerien
+from constant import temps_aerien,temps_fourreau,temps_semi_aerien
 
 ##Drop not broken houses
-def broken_network(network_df):
-    broken_network_df = network_df[network_df['infra_type']=='a_remplacer']
-    set_id_batiment = set(network_df["id_batiment"].values)
+def broken_network(df : pd.DataFrame):
+    broken_network_df = df[df['infra_type']=='a_remplacer']
+    set_id_batiment = set(df["id_batiment"].values)
     set_id_broken_batiment = set(broken_network_df['id_batiment'].values)
 
     list_id_batiment, state_batiment = [],[]
@@ -15,3 +17,26 @@ def broken_network(network_df):
             state_batiment.append("intact")
 
     return broken_network_df,list_id_batiment,state_batiment
+
+def get_right_price(infra_type):
+    if infra_type == 'aerien':
+        return prix_aerien
+    elif infra_type == 'semi-aerien':
+        return prix_semi_aerien
+    else:
+        return prix_fourreau
+
+def get_right_time(infra_type):
+    if infra_type == 'aerien':
+        return temps_aerien
+    elif infra_type == 'semi-aerien':
+        return temps_semi_aerien
+    else:
+        return temps_fourreau
+
+def add_prices_to_network_data(df : pd.DataFrame):
+    broken_network_df_2 = df.merge(info_batiment, on='id_batiment', how = "left")
+    ##Transform price and time for meter to the whole infra
+    broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
+    broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
+
