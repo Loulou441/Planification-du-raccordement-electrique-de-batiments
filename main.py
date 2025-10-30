@@ -28,7 +28,7 @@ broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
 dico_price = create_dico_price(broken_network_df_3)
-dico_time = create_dico_temps (broken_network_df_3)
+dico_temps = create_dico_temps (broken_network_df_3)
 broken_network_df_3['price'] = broken_network_df_3['infra_id'].map(dico_price)
 broken_network_df_3['temps'] = broken_network_df_3['infra_id'].map(dico_temps)
 broken_network_df_3['price'] = broken_network_df_3['price']*broken_network_df_3['longueur']
