@@ -34,9 +34,3 @@ def get_right_time(infra_type):
     else:
         return temps_fourreau
 
-def add_prices_to_network_data(df : pd.DataFrame):
-    broken_network_df_2 = df.merge(info_batiment, on='id_batiment', how = "left")
-    ##Transform price and time for meter to the whole infra
-    broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
-    broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
-
