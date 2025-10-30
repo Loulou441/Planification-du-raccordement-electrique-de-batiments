@@ -2,7 +2,7 @@
 
 ##Import all necessary functions
 import pandas as pd
-from data_prep import broken_network, get_right_price, get_right_time
+from data_prep import broken_network, create_dico_temps, create_dico_price
 from modelisation import LinearGraph
 from simulation import ProjectManager
 
@@ -11,7 +11,6 @@ network_df = pd.read_excel('cas pratique _ planification de raccordement/reseau_
 info_infra = pd.read_csv('cas pratique _ planification de raccordement/infra.csv')
 info_infra = info_infra.rename(columns={'id_infra': 'infra_id'})
 info_batiment = pd.read_csv('cas pratique _ planification de raccordement/batiments.csv')
-info_prix = pd.read_excel('cas pratique _ planification de raccordement/prix_infra.xlsx')
 
 ##Dataframe preparation
 network_df['nb_maisons'] = network_df['nb_maisons'].astype(int)
@@ -28,10 +27,13 @@ broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 ## Get all extra info on buildings and infras including prices and time to repair
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
-broken_network_df_4 = broken_network_df_3.merge(info_prix, on='type_infra', how = "left")
-broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
-broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
-final_network = broken_network_df_4
+dico_price = create_dico_price(broken_network_df_3)
+dico_time = create_dico_temps (broken_network_df_3)
+broken_network_df_3['price'] = broken_network_df_3['infra_id'].map(dico_price)
+broken_network_df_3['temps'] = broken_network_df_3['infra_id'].map(dico_temps)
+broken_network_df_3['price'] = broken_network_df_3['price']*broken_network_df_3['longueur']
+broken_network_df_3['temps'] = broken_network_df_3['temps']*broken_network_df_3['longueur']
+final_network = broken_network_df_3
 final_network.to_excel('modelisation_files/network_remastered.xlsx')
 
 ##Create files for QGIS

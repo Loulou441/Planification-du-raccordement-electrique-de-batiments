@@ -33,4 +33,19 @@ def get_right_time(infra_type):
         return temps_semi_aerien
     else:
         return temps_fourreau
+    
+def create_dico_price(df: pd.DataFrame):
+    dico_price = {}
+    list_infra_id = list(df['infra_id'])
+    for infra in list_infra_id:
+        dico_price[infra] = get_right_price(infra)
+    return dico_price
+
+def create_dico_temps(df: pd.DataFrame):
+    dico_temps = {}
+    list_infra_id = list(df['infra_id'])
+    for infra in list_infra_id:
+        dico_temps[infra] = get_right_time(infra)
+    return dico_temps
+
 
