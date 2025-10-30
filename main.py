@@ -55,6 +55,6 @@ print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"
 
 ##Dealing with the rest
 final_network = network_with_hospital[~network_with_hospital['id_batiment'].isin([id_hospital])]
-#pm = ProjectManager.from_dataframe(final_network)
-#ranked_buildings = pm.simulate_fixing(verbose=True)
-#ranked_buildings
+pm = ProjectManager.from_dataframe(final_network)
+ranked_buildings = pm.simulate_fixing(verbose=True)
+ranked_buildings
