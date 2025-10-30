@@ -5,6 +5,7 @@ import pandas as pd
 from data_prep import broken_network, create_dico_temps, create_dico_price
 from modelisation import LinearGraph
 from simulation import ProjectManager
+from hospital import get_hospital_info
 
 ##Import dataframe
 network_df = pd.read_excel('cas pratique _ planification de raccordement/reseau_en_arbre.xlsx')
@@ -27,14 +28,16 @@ broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 ## Get all extra info on buildings and infras including prices and time to repair
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
+
 dico_price = create_dico_price(broken_network_df_3)
 dico_temps = create_dico_temps (broken_network_df_3)
+
 broken_network_df_3['price'] = broken_network_df_3['infra_id'].map(dico_price)
 broken_network_df_3['temps'] = broken_network_df_3['infra_id'].map(dico_temps)
+
 broken_network_df_3['price'] = broken_network_df_3['price']*broken_network_df_3['longueur']
 broken_network_df_3['temps'] = broken_network_df_3['temps']*broken_network_df_3['longueur']
-final_network = broken_network_df_3
-final_network.to_excel('modelisation_files/network_remastered.xlsx')
+network_with_hospital = broken_network_df_3
 
 ##Create files for QGIS
 state_df=pd.DataFrame({"id_batiment": list_id_batiment, "state_batiment" : state_batiment})
@@ -44,13 +47,13 @@ state_df.to_excel('modelisation_files/etat_batiment.xlsx', index=False)
 graph = LinearGraph()
 graph.build_from_csv("modelisation_files/network_remastered.xlsx")
 
-##Exploration et résultat
-##Traitement de l'hospital
-id_bat_hospital = "".join(map(str, set(final_network[final_network['type_batiment']=='hôpital']['id_batiment'])))
-print(id_bat_hospital)
-list_infra_hospital = list(final_network[final_network['id_batiment']==id_bat_hospital]['infra_id'])
-print(list_infra_hospital)
+##Exploration et results
+##Dealing with the hospital
+budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
+print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"€ et prendra un total de "+str(temps_hospital)+" heures")
 
+##Dealing with the rest
+#final_network = network_with_hospital
 #pm = ProjectManager.from_dataframe(final_network)
 #ranked_buildings = pm.simulate_fixing(verbose=True)
 #ranked_buildings

@@ -38,14 +38,14 @@ def create_dico_price(df: pd.DataFrame):
     dico_price = {}
     list_infra_id = list(df['infra_id'])
     for infra in list_infra_id:
-        dico_price[infra] = get_right_price(infra)
+        dico_price[infra] = get_right_price(df.loc[df['infra_id'] == infra, 'type_infra'].iloc[0])
     return dico_price
 
 def create_dico_temps(df: pd.DataFrame):
     dico_temps = {}
     list_infra_id = list(df['infra_id'])
     for infra in list_infra_id:
-        dico_temps[infra] = get_right_time(infra)
+        dico_temps[infra] = get_right_time(df.loc[df['infra_id'] == infra, 'type_infra'].iloc[0])
     return dico_temps
 
 
