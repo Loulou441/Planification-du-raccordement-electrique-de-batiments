@@ -20,11 +20,11 @@ C'est sur ce dataframe final que nous nous baserons pour le reste du projet.
 ### Cas d'urgence absolu: l'hospital
 En étudiant les données, il est apparu qu'un des bâtiment affecté est un hospital. Avant de traiter d'autres bâtiments, nous avons décidé de prioriser la reconstruction de celui-ci. Le client nous a informé que le générateur de l'hospital ne pouvait tenir que 20 heures avant de s'épuiser. 
 Or, le bâtiment nécessite 3 infrastrustures pour fonctionner: P005500, P007990 et P007447.
-P005500 nécessite 26.28 heures de réparation.
-P007990 nécessite 14.23 heures de réparation.
-P007447 nécessite 37.41 heures de réparation.
-Le client préfère être rassuré et nous informe qu'une marge de 20% de temps est préférable. Soit une limite de 16 heures pour réparer le générateur. 
-Nous décidons donc de mettre 2 ouvriers sur la première infrastructure, 1 ouvrier sur la seconde, et 3 ouvriers sur la dernière en simultanée pour un temps de réparation de 14.23 heures, un coût matériel de  
+P005500 nécessite 26,28 heures de réparation.
+P007990 nécessite 37,41 heures de réparation.
+P007447 nécessite 14,23 heures de réparation.
+Le client préfère être rassuré et nous informe qu'une marge de 20% de temps est préférable. Soit une limite de 16 heures pour reraccorder le bâtiment à l'électricité. 
+Nous décidons donc de mettre 2 ouvriers sur la première infrastructure, 3 ouvrier sur la seconde, et 2 ouvriers sur la dernière en simultanée pour un temps de réparation de 14.23 heures et un budjet total de 21405.13€.
 
 ### Autres cas
 Le plus difficile a été de définir une métrique prenant en compte toutes les informations du client. il y a donc eu plusieurs étapes dans la construction de celle-ci:

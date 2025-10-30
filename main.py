@@ -38,7 +38,6 @@ broken_network_df_3['temps'] = broken_network_df_3['infra_id'].map(dico_temps)
 broken_network_df_3['price'] = broken_network_df_3['price']*broken_network_df_3['longueur']
 broken_network_df_3['temps'] = broken_network_df_3['temps']*broken_network_df_3['longueur']
 network_with_hospital = broken_network_df_3
-network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
 
 ##Create files for QGIS
 state_df=pd.DataFrame({"id_batiment": list_id_batiment, "state_batiment" : state_batiment})
@@ -71,3 +70,5 @@ time_phases = ranked_buildings['phase_time']
 
 print(time_phases)
 sum(time_phases.values())
+
+
