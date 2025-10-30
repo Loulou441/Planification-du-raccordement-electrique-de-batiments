@@ -15,21 +15,3 @@ def broken_network(network_df):
             state_batiment.append("intact")
 
     return broken_network_df,list_id_batiment,state_batiment
-
-##Create summary tables
-def summary_infra(broken_network_df):
-    infra_df = (
-                broken_network_df.groupby('infra_id')
-                .agg({
-                    'longueur': 'first',
-                    'nb_maisons': 'sum',
-                    'type_infra':'first',
-                    'prix': 'first',
-                    'temps': 'first'
-                })
-            ).reset_index()
-    return infra_df
-
-def summary_batiment(broken_network_df):
-    batiment_df = broken_network_df.groupby('id_batiment').agg({ 'infra_id': list }).reset_index()
-    return batiment_df
