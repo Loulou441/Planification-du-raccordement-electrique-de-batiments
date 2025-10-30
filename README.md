@@ -24,6 +24,7 @@ P005500 nécessite 26.28 heures de réparation.
 P007990 nécessite 14.23 heures de réparation.
 P007447 nécessite 37.41 heures de réparation.
 Le client préfère être rassuré et nous informe qu'une marge de 20% de temps est préférable. Soit une limite de 16 heures pour réparer le générateur. 
+Nous décidons donc de mettre 2 ouvriers sur la première infrastructure, 1 ouvrier sur la seconde, et 3 ouvriers sur la dernière en simultanée pour un temps de réparation de 14.23 heures, un coût matériel de  
 
 ### Autres cas
 Le plus difficile a été de définir une métrique prenant en compte toutes les informations du client. il y a donc eu plusieurs étapes dans la construction de celle-ci:
