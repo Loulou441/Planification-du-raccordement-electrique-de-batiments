@@ -1,88 +1,65 @@
 ##All simulation functions
 import pandas as pd
-from typing import List, Dict, Tuple
-from class_bat import Batiment
-from class_infra import Infra
+from typing import List, Dict
+from class_bat import Building
+from class_infra import Infrastructure
+from constant_values import PHASES
 
-class ProjectManager:
+class BrokenBuildings:
     """
     Manages Buildings and Infrastructure instances.
-    Provides simulation and ranking methods.
+    Provides simulation, ranking, and cost-phase allocation methods.
     """
 
-    def __init__(self, buildings: List['Batiment'], infrastructure: List['Infra']):
+    def __init__(self, buildings: List[Building]):
         self.buildings = buildings
-        self.infrastructure = infrastructure
 
-    # -----------------------------
-    # 🏗️ Class Constructor
-    # -----------------------------
+    # ---------- Factory ----------
     @classmethod
-    def from_dataframe(cls, df: pd.DataFrame) -> 'ProjectManager':
-        """
-        Creates a ProjectManager instance from a pandas DataFrame.
-        Expects columns: id_batiment, nb_maisons, price, temps, infra_id, type_batiment, infra_type.
-        """
-        required_cols = ['id_batiment', 'nb_maisons', 'price', 'temps', 'infra_id', 'type_batiment', 'infra_type']
+    def from_dataframe(cls, df: pd.DataFrame) -> 'BrokenBuildings':
+        required_cols = ['id_batiment', 'nb_maisons', 'infra_id', 'type_batiment', 'type_infra', 'longueur', 'infra_state']
         missing = [col for col in required_cols if col not in df.columns]
         if missing:
             raise ValueError(f"Missing columns: {missing}")
 
-        # --- Data preparation ---
         df = df.copy()
-        df['id_batiment'] = df['id_batiment'].astype(str)
+        df['building_id'] = df['id_batiment'].astype(str)
         df['num_houses'] = df['nb_maisons'].astype(int)
-        df['price'] = df['price'].astype(float)
-        df['temps'] = df['temps'].astype(float)
-        df['infra_id'] = df['infra_id'].astype(str)
+        df['longueur'] = df['longueur'].astype(float)
+        df['infrastructure_id'] = df['infra_id'].astype(str)
 
-        # Aggregate total houses per infrastructure
-        infra_house_map = (
-            df.groupby('infra_id')['num_houses'].sum().to_dict()
-        )
+        infra_house_map = df.groupby('infrastructure_id')['num_houses'].sum().to_dict()
 
-        # Create unique Infrastructure instances
-        infra_instances = {}
-        for _, row in df.drop_duplicates(subset=['infra_id']).iterrows():
-            infra_instances[row['infra_id']] = Infra(
-                infra_id=row['infra_id'],
-                infra_type=row['infra_type'],
-                infra_state='Operational',
-                price=row['price'],
-                temps=row['temps'],
-                nb_maisons=infra_house_map[row['infra_id']],
+        infra_instances = {
+            row['infrastructure_id']: Infrastructure(
+                infrastructure_id=row['infrastructure_id'],
+                infrastructure_type=row['type_infra'],
+                infrastructure_state=row['infra_state'],
+                length=row['longueur'],
+                num_houses=infra_house_map[row['infrastructure_id']],
             )
+            for _, row in df.drop_duplicates(subset=['infrastructure_id']).iterrows()
+        }
 
-        # Link infrastructures to buildings
-        building_instances = []
-        grouped = df.groupby('id_batiment')
-        for b_id, group in grouped:
-            linked_infras = [infra_instances[iid] for iid in group['infra_id'].unique()]
-            building_instances.append(
-                Batiment(
-                    id_batiment=b_id,
-                    type_batiment=group['type_batiment'].iloc[0],
-                    nb_maisons=group['nb_maisons'].iloc[0],
-                    list_infra=linked_infras,
+        buildings = []
+        for b_id, group in df.groupby('building_id'):
+            linked = [infra_instances[iid] for iid in group['infrastructure_id'].unique()]
+            buildings.append(
+                Building(
+                    building_id=b_id,
+                    building_type=group['type_batiment'].iloc[0],
+                    num_houses=group['num_houses'].iloc[0],
+                    infrastructure_list=linked,
                 )
             )
 
-        return cls(building_instances, list(infra_instances.values()))
+        return cls(buildings)
 
-    # -----------------------------
-    # ⚙️ Core Methods
-    # -----------------------------
-    def rank_buildings(self) -> List['Batiment']:
-        """Return buildings sorted by total difficulty (ascending)."""
-        return sorted(self.buildings, key=lambda b: b.calculate_difficulty())
-
-    def fix_building(self, building: 'Batiment', verbose: bool = False) -> List[str]:
-        """
-        Fix the given building and update shared infrastructures.
-        Returns a list of infrastructure IDs that were fixed.
-        """
-        fixed_ids = [infra.infra_id for infra in building.list_infra if not infra.is_fixed]
-        for infra in building.list_infra:
+    # ---------- Fixing Mechanics ----------
+    def fix_building(self, building: Building, verbose=False) -> List[str]:
+        """Fix a building and remove its infrastructures from others."""
+        fixed_ids = [infra.infrastructure_id for infra in building.infrastructure_list if not infra.is_fixed]
+        for infra in building.infrastructure_list:
             infra.is_fixed = True
 
         if not fixed_ids:
@@ -92,58 +69,117 @@ class ProjectManager:
             if b is building:
                 continue
             before = b.calculate_difficulty()
-            # Remove fixed infrastructures from other buildings
-            b.list_infra = [i for i in b.list_infra if i.infra_id not in fixed_ids]
+            b.infrastructure_list = [i for i in b.infrastructure_list if i.infrastructure_id not in fixed_ids]
             after = b.calculate_difficulty()
-
             if verbose and before != after:
-                print(f"  Building {b.id_batiment}: difficulty {before:.2f} → {after:.2f}")
+                print(f"  Building {b.building_id}: difficulty {before:.2f} → {after:.2f}")
 
         return fixed_ids
 
-    def simulate_fixing(self, verbose: bool = True) -> Dict[int, int]:
+    # ---------- Simulation ----------
+    def simulate_fixing(self, verbose=True):
         """
-        Iteratively fix buildings by ascending difficulty.
-        Buildings with difficulty == 0 are skipped (already fixed),
-        but do not stop the simulation.
-        Logs the infrastructures fixed for each building.
+        High-level orchestration: simulate the fixing process,
+        compute total costs, assign phases, and summarize results.
         """
-        results = {}
-        rank = 1
-
         if verbose:
             print("\n--- Fixing Simulation Started ---")
 
-        remaining = set(self.buildings)
+        # Step 1: Simulate dynamic fixing (returns order, costs, and times)
+        fixed_order, building_costs, building_times = self._run_fixing_sequence(verbose=verbose)
+
+        # Step 2: Compute total cost and phase thresholds
+        total_cost = sum(building_costs.values())
+        thresholds = self._compute_phase_thresholds(total_cost)
+
+        # Step 3: Assign buildings to phases based on cumulative cost
+        building_phase_map = self._assign_buildings_to_phases(fixed_order, building_costs, thresholds)
+
+        # Step 4: Summarize cost/time per phase
+        summary = self._summarize_phases(building_phase_map, building_costs, building_times, total_cost, verbose)
+
+        return summary
+
+    def _run_fixing_sequence(self, verbose=False):
+        """Simulate the actual fixing process, updating buildings dynamically."""
+        remaining = [b for b in self.buildings]
+        fixed_order = []
+        building_costs = {}
+        building_times = {}
+        rank = 1
 
         while remaining:
-            # Sort by current difficulty
-            ranked = sorted(remaining, key=lambda b: b.calculate_difficulty())
-            current = ranked[0]
+            remaining.sort(key=lambda b: b.calculate_difficulty())
+            current = remaining[0]
             diff = current.calculate_difficulty()
 
-            # Skip buildings that are already effectively fixed
             if diff == 0:
                 if verbose:
-                    print(f"Skipping Building {current.id_batiment} (already fixed)")
-                results[current.id_batiment] = rank
-                remaining.remove(current)
+                    print(f"Skipping Building {current.building_id} (already fixed)")
+                remaining.pop(0)
                 continue
 
             if verbose:
-                print(f"\nStep {rank}: Fixing Building {current.id_batiment} (difficulty {diff:.2f})")
+                print(f"\nStep {rank}: Fixing Building {current.building_id} (difficulty {diff:.2f})")
 
-            # Fix the building and get list of fixed infrastructures
-            fixed_infra_ids = self.fix_building(current, verbose=verbose)
-            results[current.id_batiment] = rank
-            remaining.remove(current)
+            building_costs[current.building_id] = current.total_cost
+            building_times[current.building_id] = current.total_time
 
-            if verbose:
-                infra_list_str = ", ".join(fixed_infra_ids) if fixed_infra_ids else "None"
-                print(f"  → Fixed infrastructures: [{infra_list_str}]")
+            self.fix_building(current, verbose=verbose)
 
+            fixed_order.append(current)
+            remaining.pop(0)
             rank += 1
+
+        return fixed_order, building_costs, building_times
+
+    def _compute_phase_thresholds(self, total_cost: float) -> List[float]:
+        """Compute cumulative cost thresholds based on PHASES."""
+        return [sum(PHASES[:i]) * total_cost for i in range(1, len(PHASES) + 1)]
+
+    def _assign_buildings_to_phases(self, fixed_order: List[Building],
+                                    building_costs: Dict[str, float],
+                                    thresholds: List[float]) -> Dict[str, int]:
+        """Assign buildings to phases dynamically based on cumulative cost."""
+        cumulative = 0.0
+        building_phase_map = {}
+        num_phases = len(PHASES)
+
+        for b in fixed_order:
+            cumulative += building_costs[b.building_id]
+            for i, threshold in enumerate(thresholds, start=1):
+                if cumulative <= threshold:
+                    phase = i
+                    break
+            else:
+                phase = num_phases
+            building_phase_map[b.building_id] = phase
+
+        return building_phase_map
+
+    def _summarize_phases(self, building_phase_map, building_costs, building_times, total_cost, verbose):
+        """Aggregate cost/time per phase and print a summary."""
+        num_phases = len(PHASES)
+        phase_buildings = {i + 1: [] for i in range(num_phases)}
+        phase_cost = {i + 1: 0.0 for i in range(num_phases)}
+        phase_time = {i + 1: 0.0 for i in range(num_phases)}
+
+        for b_id, phase in building_phase_map.items():
+            phase_buildings[phase].append(b_id)
+            phase_cost[phase] += building_costs[b_id]
+            phase_time[phase] += building_times[b_id]
 
         if verbose:
             print("\n--- Simulation Complete ---")
-        return results
+            for ph in range(1, num_phases + 1):
+                perc = (phase_cost[ph] / total_cost * 100) if total_cost else 0
+                print(f"Phase {ph}: Buildings {phase_buildings[ph]}, "
+                      f"Cost: {phase_cost[ph]:.2f} ({perc:.2f}%), Time: {phase_time[ph]:.2f}h")
+
+        return {
+            "phase_buildings": phase_buildings,
+            "phase_cost": phase_cost,
+            "phase_time": phase_time,
+            "building_phase_map": building_phase_map,
+            "total_project_cost": total_cost
+        }

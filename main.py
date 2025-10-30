@@ -4,7 +4,7 @@
 import pandas as pd
 from data_prep import broken_network, create_dico_temps, create_dico_price
 from modelisation import LinearGraph
-from simulation import ProjectManager
+from simulation import BrokenBuildings
 from hospital import get_hospital_info
 
 ##Import dataframe
@@ -38,6 +38,7 @@ broken_network_df_3['temps'] = broken_network_df_3['infra_id'].map(dico_temps)
 broken_network_df_3['price'] = broken_network_df_3['price']*broken_network_df_3['longueur']
 broken_network_df_3['temps'] = broken_network_df_3['temps']*broken_network_df_3['longueur']
 network_with_hospital = broken_network_df_3
+network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
 
 ##Create files for QGIS
 state_df=pd.DataFrame({"id_batiment": list_id_batiment, "state_batiment" : state_batiment})
@@ -45,15 +46,28 @@ state_df.to_excel('modelisation_files/etat_batiment.xlsx', index=False)
 
 ##Modelisation
 graph = LinearGraph()
-graph.build_from_csv("modelisation_files/network_remastered.xlsx")
+graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
 
 ##Exploration et results
 ##Dealing with the hospital
-budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
+id_hospital, budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
 print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"€ et prendra un total de "+str(temps_hospital)+" heures")
 
 ##Dealing with the rest
-#final_network = network_with_hospital
-#pm = ProjectManager.from_dataframe(final_network)
-#ranked_buildings = pm.simulate_fixing(verbose=True)
-#ranked_buildings
+final_network = network_with_hospital[~network_with_hospital['id_batiment'].isin([id_hospital])]
+final_network = final_network.rename(columns={'infra_type': 'infra_state'})
+pm = BrokenBuildings.from_dataframe(final_network)
+ranked_buildings = pm.simulate_fixing(verbose=True)
+ranked_buildings
+
+budget_phases = ranked_buildings['phase_cost']
+#sum the budget
+sum(budget_phases.values())
+#calculate the percentage for every phase
+for phase, budget in budget_phases.items():
+    print(f"Phase {phase}: {budget / sum(budget_phases.values()) * 100:.2f}%")
+time_phases = ranked_buildings['phase_time']
+#sum the time
+
+print(time_phases)
+sum(time_phases.values())
