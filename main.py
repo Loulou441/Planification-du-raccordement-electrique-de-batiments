@@ -2,7 +2,7 @@
 
 ##Import all necessary functions
 import pandas as pd
-from data_prep import broken_network, summary_batiment, summary_infra
+from data_prep import broken_network
 from modelisation import LinearGraph
 from simulation import ProjectManager
 
@@ -29,6 +29,8 @@ broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
 broken_network_df_4 = broken_network_df_3.merge(info_prix, on='type_infra', how = "left")
+broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
+broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
 final_network = broken_network_df_4
 final_network.to_excel('modelisation_files/network_remastered.xlsx')
 
