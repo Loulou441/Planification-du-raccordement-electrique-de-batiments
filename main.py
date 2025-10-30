@@ -4,7 +4,7 @@
 import pandas as pd
 from data_prep import broken_network, create_dico_temps, create_dico_price
 from modelisation import LinearGraph
-from simulation import ProjectManager
+from simulation import BrokenBuildings
 from hospital import get_hospital_info
 
 ##Import dataframe
@@ -55,6 +55,19 @@ print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"
 
 ##Dealing with the rest
 final_network = network_with_hospital[~network_with_hospital['id_batiment'].isin([id_hospital])]
-pm = ProjectManager.from_dataframe(final_network)
+final_network = final_network.rename(columns={'infra_type': 'infra_state'})
+pm = BrokenBuildings.from_dataframe(final_network)
 ranked_buildings = pm.simulate_fixing(verbose=True)
 ranked_buildings
+
+budget_phases = ranked_buildings['phase_cost']
+#sum the budget
+sum(budget_phases.values())
+#calculate the percentage for every phase
+for phase, budget in budget_phases.items():
+    print(f"Phase {phase}: {budget / sum(budget_phases.values()) * 100:.2f}%")
+time_phases = ranked_buildings['phase_time']
+#sum the time
+
+print(time_phases)
+sum(time_phases.values())

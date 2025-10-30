@@ -1,32 +1,44 @@
 ##creating building class
-class Batiment:
+from class_infra import Infrastructure
+from typing import List
+
+class Building:
     """
     Represents a building or a complex of houses.
     """
-    def __init__(self, id_batiment, type_batiment, nb_maisons, list_infra=None):
-        self.id_batiment = id_batiment
-        self.type_batiment = type_batiment
-        self.nb_maisons = int(nb_maisons)
-        self.list_infra = list_infra if list_infra is not None else []
+
+    def __init__(self, building_id: int, building_type: str, num_houses: int,
+                 infrastructure_list: List[Infrastructure] = None):
+        self.building_id = building_id
+        self.building_type = building_type
+        self.num_houses = num_houses
+        self.infrastructure_list = infrastructure_list if infrastructure_list else []
 
     def __repr__(self):
-        return (f"Batiment(ID: {self.id_batiment}, Type: '{self.type_batiment}', "
-                f"Houses: {self.nb_maisons}, Infra Count: {len(self.list_infra)}, Total Difficulty: {self.calculate_difficulty():.2f})")
+        return (f"Building(ID: {self.building_id}, Type: '{self.building_type}', "
+                f"Houses: {self.num_houses}, Infra Count: {len(self.infrastructure_list)}, "
+                f"Total Difficulty: {self.calculate_difficulty():.2f})")
+    @property
+    def total_cost(self) -> float:
+        """Total cost of unfixed infrastructures in this building."""
+        return sum(infra.total_cost for infra in self.infrastructure_list if not infra.is_fixed)
 
-    def get_details(self):
-        return f"Building ID: {self.id_batiment}, Type: {self.type_batiment}, Number of Units: {self.nb_maisons}"
+    @property
+    def total_time(self) -> float:
+        """Total repair time of unfixed infrastructures in this building."""
+        return sum(infra.repair_time_hours for infra in self.infrastructure_list if not infra.is_fixed)
+        
+    def calculate_difficulty(self) -> float:
+        """Calculates the total difficulty of all linked infrastructures."""
+        return sum(self.infrastructure_list)
 
-    def calculate_difficulty(self):
-        total_difficulty = 0.0
-        for infra in self.list_infra:
-            total_difficulty += infra.calculate_difficulty()
-        return total_difficulty
-
-    def remove_infra(self, infra_id):
+    def remove_infrastructure(self, infrastructure_id: str) -> bool:
         """
-        Removes a specified Infra object (by ID) from this Batiment's list.
-        Returns True if an infra object was successfully removed.
+        Removes a specified Infrastructure object (by ID).
+        Returns True if an infrastructure was removed.
         """
-        original_len = len(self.list_infra)
-        self.list_infra = [infra for infra in self.list_infra if infra.infra_id != infra_id]
-        return original_len != len(self.list_infra)
+        original_len = len(self.infrastructure_list)
+        self.infrastructure_list = [
+            infra for infra in self.infrastructure_list if infra.infrastructure_id != infrastructure_id
+        ]
+        return original_len != len(self.infrastructure_list)
