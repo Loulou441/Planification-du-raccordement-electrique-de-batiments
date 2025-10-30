@@ -1,4 +1,4 @@
-from constant import paye_ouvrier_par_heure
+from constant_values import paye_ouvrier_par_heure
 import pandas as pd
 
 def get_hospital_info(df: pd.DataFrame):

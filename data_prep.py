@@ -1,6 +1,6 @@
 import pandas as pd
-from constant import prix_aerien,prix_fourreau,prix_semi_aerien
-from constant import temps_aerien,temps_fourreau,temps_semi_aerien
+from constant_values import prix_aerien,prix_fourreau,prix_semi_aerien
+from constant_values import temps_aerien,temps_fourreau,temps_semi_aerien
 
 ##Drop not broken houses
 def broken_network(df : pd.DataFrame):
