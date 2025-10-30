@@ -22,7 +22,10 @@ def summary_infra(broken_network_df):
                 broken_network_df.groupby('infra_id')
                 .agg({
                     'longueur': 'first',
-                    'nb_maisons': 'sum'
+                    'nb_maisons': 'sum',
+                    'type_infra':'first',
+                    'prix': 'first',
+                    'temps': 'first'
                 })
             ).reset_index()
     return infra_df

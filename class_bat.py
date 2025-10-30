@@ -1,15 +1,32 @@
 ##creating building class
-from class_infra import get_infra_difficulty
-
 class Batiment:
-  def __init__(self, id, list_infra):
-    self.id = id
-    self.list_infra = list_infra
+    """
+    Represents a building or a complex of houses.
+    """
+    def __init__(self, id_batiment, type_batiment, nb_maisons, list_infra=None):
+        self.id_batiment = id_batiment
+        self.type_batiment = type_batiment
+        self.nb_maisons = int(nb_maisons)
+        self.list_infra = list_infra if list_infra is not None else []
 
-  def get_building_difficulty(self):
+    def __repr__(self):
+        return (f"Batiment(ID: {self.id_batiment}, Type: '{self.type_batiment}', "
+                f"Houses: {self.nb_maisons}, Infra Count: {len(self.list_infra)}, Total Difficulty: {self.calculate_difficulty():.2f})")
+
+    def get_details(self):
+        return f"Building ID: {self.id_batiment}, Type: {self.type_batiment}, Number of Units: {self.nb_maisons}"
+
+    def calculate_difficulty(self):
+        total_difficulty = 0.0
         for infra in self.list_infra:
-           difficulty = infra.get_infra_difficulty()
-        return difficulty
-  
-  def __lt__(self, other_building):
-    return self.get_building_difficulty() < other_building.get_building_difficulty()
+            total_difficulty += infra.calculate_difficulty()
+        return total_difficulty
+
+    def remove_infra(self, infra_id):
+        """
+        Removes a specified Infra object (by ID) from this Batiment's list.
+        Returns True if an infra object was successfully removed.
+        """
+        original_len = len(self.list_infra)
+        self.list_infra = [infra for infra in self.list_infra if infra.infra_id != infra_id]
+        return original_len != len(self.list_infra)
