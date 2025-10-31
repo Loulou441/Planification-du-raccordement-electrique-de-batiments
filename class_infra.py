@@ -3,8 +3,8 @@ from constant_values import EQUIPPEMENT_PRICE, TIME_TO_FIX, WORKER_PAY_PER_8H, M
 
 class Infrastructure:
     """
-    Represents a single infrastructure element (e.g., road, water main).
-    Uses 'price' and 'time' for calculation.
+    Represents a single infrastructure element .
+    used length to assess the cost of the infrastructure.
     """
     def __init__(self, infrastructure_id: str, infrastructure_type: str, length: float,
                  infrastructure_state: str, num_houses: int):
@@ -26,11 +26,6 @@ class Infrastructure:
         return TIME_TO_FIX.get(self.infrastructure_type, 0) * self.length
 
     @property
-    def worker_pay_per_hour(self) -> float:
-        """Worker hourly rate."""
-        return WORKER_PAY_PER_8H / 8
-
-    @property
     def labor_cost(self) -> float:
         """
         Computes labor cost based on repair time and workers assigned.
@@ -38,7 +33,7 @@ class Infrastructure:
         - Workers are paid per actual hour worked.
         """
         total_hours = self.repair_time_hours
-        pay_per_hour = self.worker_pay_per_hour
+        pay_per_hour = WORKER_PAY_PER_8H / 8
 
         # Each wave of work (with up to 4 workers) covers 8h * 4 = 32 worker-hours
         full_shifts = int(total_hours // (8 * MAX_WORKERS_PER_INFRA))

@@ -4,7 +4,7 @@ from typing import List
 
 class Building:
     """
-    Represents a building or a complex of houses.
+    Represents a building with a list of infrastructures linked to it.
     """
 
     def __init__(self, building_id: int, building_type: str, num_houses: int,
@@ -21,13 +21,13 @@ class Building:
     @property
     def total_cost(self) -> float:
         """Total cost of unfixed infrastructures in this building."""
-        return sum(infra.total_cost for infra in self.infrastructure_list if not infra.is_fixed)
+        return sum(infra.total_cost for infra in self.infrastructure_list)
 
     @property
     def total_time(self) -> float:
         """Total repair time of unfixed infrastructures in this building."""
-        return sum(infra.repair_time_hours for infra in self.infrastructure_list if not infra.is_fixed)
-        
+        return max(infra.repair_time_hours for infra in self.infrastructure_list)
+
     def calculate_difficulty(self) -> float:
         """Calculates the total difficulty of all linked infrastructures."""
         return sum(self.infrastructure_list)

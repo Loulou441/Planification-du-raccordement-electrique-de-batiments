@@ -7,7 +7,7 @@ from constant_values import PHASES
 
 class BrokenBuildings:
     """
-    Manages Buildings and Infrastructure instances.
+    Manages Buildings and Infrastructure instances, Reading the data from a dataframe.
     Provides simulation, ranking, and cost-phase allocation methods.
     """
 
@@ -56,23 +56,23 @@ class BrokenBuildings:
         return cls(buildings)
 
     # ---------- Fixing Mechanics ----------
-    def fix_building(self, building: Building, verbose=False) -> List[str]:
+    def fix_building(self, target_building: Building, verbose=False) -> List[str]:
         """Fix a building and remove its infrastructures from others."""
-        fixed_ids = [infra.infrastructure_id for infra in building.infrastructure_list if not infra.is_fixed]
-        for infra in building.infrastructure_list:
+        fixed_ids = [infra.infrastructure_id for infra in target_building.infrastructure_list if not infra.is_fixed]
+        for infra in target_building.infrastructure_list:
             infra.is_fixed = True
 
         if not fixed_ids:
             return []
 
-        for b in self.buildings:
-            if b is building:
+        for building in self.buildings:
+            if building is target_building:
                 continue
-            before = b.calculate_difficulty()
-            b.infrastructure_list = [i for i in b.infrastructure_list if i.infrastructure_id not in fixed_ids]
-            after = b.calculate_difficulty()
+            before = building.calculate_difficulty()
+            building.infrastructure_list = [i for i in building.infrastructure_list if i.infrastructure_id not in fixed_ids]
+            after = building.calculate_difficulty()
             if verbose and before != after:
-                print(f"  Building {b.building_id}: difficulty {before:.2f} → {after:.2f}")
+                print(f"  Building {building.building_id}: difficulty {before:.2f} → {after:.2f}")
 
         return fixed_ids
 
@@ -145,15 +145,15 @@ class BrokenBuildings:
         building_phase_map = {}
         num_phases = len(PHASES)
 
-        for b in fixed_order:
-            cumulative += building_costs[b.building_id]
+        for building in fixed_order:
+            cumulative += building_costs[building.building_id]
             for i, threshold in enumerate(thresholds, start=1):
                 if cumulative <= threshold:
                     phase = i
                     break
             else:
                 phase = num_phases
-            building_phase_map[b.building_id] = phase
+            building_phase_map[building.building_id] = phase
 
         return building_phase_map
 
@@ -164,10 +164,15 @@ class BrokenBuildings:
         phase_cost = {i + 1: 0.0 for i in range(num_phases)}
         phase_time = {i + 1: 0.0 for i in range(num_phases)}
 
+        # Group buildings by phase
         for b_id, phase in building_phase_map.items():
             phase_buildings[phase].append(b_id)
             phase_cost[phase] += building_costs[b_id]
-            phase_time[phase] += building_times[b_id]
+
+        # Compute time per phase as max(building_times)
+        for phase in range(1, num_phases + 1):
+            times = [building_times[b_id] for b_id in phase_buildings[phase]]
+            phase_time[phase] = max(times) if times else 0.0
 
         if verbose:
             print("\n--- Simulation Complete ---")
