@@ -25,7 +25,7 @@ class Building:
 
     @property
     def total_time(self) -> float:
-        """Total repair time of unfixed infrastructures in this building."""
+        """maximum repair time of unfixed infrastructures in this building."""
         return max(infra.repair_time_hours for infra in self.infrastructure_list)
 
     def calculate_difficulty(self) -> float:
