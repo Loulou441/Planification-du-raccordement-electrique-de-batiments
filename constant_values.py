@@ -15,8 +15,8 @@ temps_semi_aerien = 4
 temps_fourreau = 5
 
 ##Constants in simulation form
-EQUIPPEMENT_PRICE =  {"aerien" : 500, "fourreau" : 900, "semi-aerien" : 750}
-TIME_TO_FIX = {"aerien" : 2, "fourreau" : 5, "semi-aerien" : 4}
-WORKER_PAY_PER_8H = 300         # euros
-MAX_WORKERS_PER_INFRA = 4
+EQUIPPEMENT_PRICE =  {"aerien" : prix_aerien, "fourreau" : prix_fourreau, "semi-aerien" : prix_semi_aerien}
+TIME_TO_FIX = {"aerien" : temps_aerien, "fourreau" : temps_fourreau, "semi-aerien" : temps_semi_aerien}
+WORKER_PAY_PER_8H = paye_ouvier_jour         # euros
+MAX_WORKERS_PER_INFRA = max_ouvrier_infra
 PHASES = [0.4, 0.2, 0.2, 0.2]
