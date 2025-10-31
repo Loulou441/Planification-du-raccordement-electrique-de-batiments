@@ -49,11 +49,12 @@ graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
 
 ##Exploration et results
 ##Dealing with the hospital
-id_hospital, budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
+id_hospital, list_infra_hospital, budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
 print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"€ et prendra un total de "+str(temps_hospital)+" heures")
 
 ##Dealing with the rest
 final_network = network_simulation[~network_simulation['id_batiment'].isin([id_hospital])]
+final_network = final_network[~final_network['infra_id'].isin(list_infra_hospital)]
 final_network = final_network.drop(['temps', 'price'], axis=1)
 final_network = final_network.rename(columns={'infra_type': 'infra_state'})
 final_network.to_excel('modelisation_files/final_network.xlsx', index=False)

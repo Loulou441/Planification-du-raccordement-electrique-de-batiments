@@ -13,4 +13,4 @@ def get_hospital_info(df: pd.DataFrame):
         budjet_hopital += cout_ouvrier + cout_materiel
         temps_infra = df.loc[df['infra_id'] == list_infra_hospital[infra_nb], 'temps'].iloc[0]/list_nb_ouvrier[infra_nb]
         temps_hospital = max(temps_hospital, temps_infra)
-    return id_bat_hospital, round(budjet_hopital, 2), round(temps_hospital,2)
+    return id_bat_hospital, list_infra_hospital, round(budjet_hopital, 2), round(temps_hospital,2)
