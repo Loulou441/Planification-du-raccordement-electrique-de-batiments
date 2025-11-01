@@ -1,6 +1,6 @@
 import pandas as pd
-from constant_values import prix_aerien,prix_fourreau,prix_semi_aerien
-from constant_values import temps_aerien,temps_fourreau,temps_semi_aerien
+from config import AERIEN_PRICE,SEMI_AERIEN_PRICE,FOURREAU_PRICE
+from config import AERIEN_TIME,SEMI_AERIEN_TIME,FOURREAU_TIME
 
 ##Drop not broken houses
 def broken_network(df : pd.DataFrame):
@@ -20,19 +20,19 @@ def broken_network(df : pd.DataFrame):
 
 def get_right_price(infra_type):
     if infra_type == 'aerien':
-        return prix_aerien
+        return AERIEN_PRICE
     elif infra_type == 'semi-aerien':
-        return prix_semi_aerien
+        return SEMI_AERIEN_PRICE
     else:
-        return prix_fourreau
+        return FOURREAU_PRICE
 
 def get_right_time(infra_type):
     if infra_type == 'aerien':
-        return temps_aerien
+        return AERIEN_TIME
     elif infra_type == 'semi-aerien':
-        return temps_semi_aerien
+        return SEMI_AERIEN_TIME
     else:
-        return temps_fourreau
+        return FOURREAU_TIME
     
 def create_dico_price(df: pd.DataFrame):
     dico_price = {}

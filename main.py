@@ -8,10 +8,10 @@ from simulation import BrokenBuildings
 from hospital import get_hospital_info
 
 ##Import dataframe
-network_df = pd.read_excel('cas pratique _ planification de raccordement/reseau_en_arbre.xlsx')
-info_infra = pd.read_csv('cas pratique _ planification de raccordement/infra.csv')
+network_df = pd.read_excel('data/reseau_en_arbre.xlsx')
+info_infra = pd.read_csv('data/infra.csv')
 info_infra = info_infra.rename(columns={'id_infra': 'infra_id'})
-info_batiment = pd.read_csv('cas pratique _ planification de raccordement/batiments.csv')
+info_batiment = pd.read_csv('data/batiments.csv')
 
 ##Dataframe preparation
 network_df['nb_maisons'] = network_df['nb_maisons'].astype(int)
@@ -29,7 +29,6 @@ broken_network_df_no_houses =  broken_network_df.drop('nb_maisons', axis=1)
 broken_network_df_2 = broken_network_df_no_houses.merge(info_batiment, on='id_batiment', how = "left")
 broken_network_df_3 = broken_network_df_2.merge(info_infra, on='infra_id', how = "left")
 network_simulation = broken_network_df_3
-network_simulation.to_excel('modelisation_files/network_simulation.xlsx', index=False)
 
 dico_price = create_dico_price(broken_network_df_3)
 dico_temps = create_dico_temps (broken_network_df_3)
@@ -41,37 +40,23 @@ broken_network_df_4['temps'] = broken_network_df_4['infra_id'].map(dico_temps)
 broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
 broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
 network_with_hospital = broken_network_df_4
-network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
+#network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
 
 ##Modelisation
-graph = LinearGraph()
-graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
+##graph = LinearGraph()
+##graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
 
 ##Exploration et results
 ##Dealing with the hospital
-id_hospital, list_infra_hospital, budjet_hospital, temps_hospital = get_hospital_info(network_with_hospital)
-print("Le budjet total de réparation de l'hôpital est "+str(budjet_hospital)+"€ et prendra un total de "+str(temps_hospital)+" heures")
+id_hospital, list_infra_hospital, budget_hospital, temps_hospital = get_hospital_info(network_with_hospital)
+print("Le budjet total de réparation de l'hôpital est "+str(budget_hospital)+"€ et prendra un total de "+str(temps_hospital)+" heures")
 
 ##Dealing with the rest
 final_network = network_simulation[~network_simulation['id_batiment'].isin([id_hospital])]
 final_network = final_network[~final_network['infra_id'].isin(list_infra_hospital)]
 final_network = final_network.drop(['temps', 'price'], axis=1)
 final_network = final_network.rename(columns={'infra_type': 'infra_state'})
-final_network.to_excel('modelisation_files/final_network.xlsx', index=False)
 
 pm = BrokenBuildings.from_dataframe(final_network)
 ranked_buildings = pm.simulate_fixing(verbose=True)
 ranked_buildings
-
-budget_phases = ranked_buildings['phase_cost']
-#sum the budget
-sum(budget_phases.values())
-#calculate the percentage for every phase
-for phase, budget in budget_phases.items():
-    print(f"Phase {phase}: {budget / sum(budget_phases.values()) * 100:.2f}%")
-time_phases = ranked_buildings['phase_time']
-#sum the time
-
-print(time_phases)
-sum(time_phases.values())
-

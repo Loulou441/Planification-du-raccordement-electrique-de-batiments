@@ -3,7 +3,7 @@ import pandas as pd
 from typing import List, Dict
 from class_bat import Building
 from class_infra import Infrastructure
-from constant_values import PHASES
+from config import PHASES
 
 class BrokenBuildings:
     """

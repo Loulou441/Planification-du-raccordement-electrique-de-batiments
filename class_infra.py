@@ -1,5 +1,5 @@
 ##Creating infra class
-from constant_values import EQUIPPEMENT_PRICE, TIME_TO_FIX, WORKER_PAY_PER_8H, MAX_WORKERS_PER_INFRA
+from config import EQUIPMENT_PRICE, TIME_TO_FIX, WORKER_PAY_PER_8H, MAX_WORKERS_PER_INFRA
 
 class Infrastructure:
     """
@@ -18,7 +18,7 @@ class Infrastructure:
     @property
     def equipement_cost(self) -> float:
         """Material cost based on equipment type and length."""
-        return EQUIPPEMENT_PRICE.get(self.infrastructure_type, 0) * self.length
+        return EQUIPMENT_PRICE.get(self.infrastructure_type, 0) * self.length
 
     @property
     def repair_time_hours(self) -> float:
@@ -67,7 +67,7 @@ class Infrastructure:
         """
         if self.is_fixed or self.num_houses == 0:
             return 0.0
-        total_price = self.length * EQUIPPEMENT_PRICE[self.infrastructure_type]
+        total_price = self.length * EQUIPMENT_PRICE[self.infrastructure_type]
         total_time = self.length * TIME_TO_FIX[self.infrastructure_type]
         return (total_price * total_time) / self.num_houses
 
