@@ -1,4 +1,4 @@
-from constant_values import paye_ouvrier_par_heure
+from config import WORKER_PAY_PER_HOUR
 import pandas as pd
 
 def get_hospital_info(df: pd.DataFrame):
@@ -8,7 +8,7 @@ def get_hospital_info(df: pd.DataFrame):
     budjet_hopital = 0
     temps_hospital = 0
     for infra_nb in range(3):
-        cout_ouvrier = paye_ouvrier_par_heure*df.loc[df['infra_id'] == list_infra_hospital[infra_nb], 'temps'].iloc[0]
+        cout_ouvrier = WORKER_PAY_PER_HOUR*df.loc[df['infra_id'] == list_infra_hospital[infra_nb], 'temps'].iloc[0]
         cout_materiel = df.loc[df['infra_id'] == list_infra_hospital[infra_nb], 'price'].iloc[0]
         budjet_hopital += cout_ouvrier + cout_materiel
         temps_infra = df.loc[df['infra_id'] == list_infra_hospital[infra_nb], 'temps'].iloc[0]/list_nb_ouvrier[infra_nb]

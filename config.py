@@ -1,0 +1,21 @@
+##Constant on workers
+WORKER_HOURS_PER_DAY = 8
+WORKER_PAY_PER_DAY = 300
+WORKER_PAY_PER_HOUR = WORKER_PAY_PER_DAY/WORKER_HOURS_PER_DAY
+MAX_WORKERS_PER_INFRA = 4
+
+##Constant on prices
+AERIEN_PRICE = 500
+SEMI_AERIEN_PRICE = 750 
+FOURREAU_PRICE = 900
+
+##Constant on time
+AERIEN_TIME = 2
+SEMI_AERIEN_TIME = 4 
+FOURREAU_TIME = 5
+
+##Constants in simulation form
+EQUIPMENT_PRICE =  {"aerien" : AERIEN_PRICE, "fourreau" : FOURREAU_PRICE, "semi-aerien" : SEMI_AERIEN_PRICE}
+TIME_TO_FIX = {"aerien" : AERIEN_TIME, "fourreau" : FOURREAU_TIME, "semi-aerien" : SEMI_AERIEN_TIME}
+WORKER_PAY_PER_8H = WORKER_PAY_PER_DAY         # euros
+PHASES = [0.4, 0.2, 0.2, 0.2]
