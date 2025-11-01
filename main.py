@@ -40,11 +40,11 @@ broken_network_df_4['temps'] = broken_network_df_4['infra_id'].map(dico_temps)
 broken_network_df_4['price'] = broken_network_df_4['price']*broken_network_df_4['longueur']
 broken_network_df_4['temps'] = broken_network_df_4['temps']*broken_network_df_4['longueur']
 network_with_hospital = broken_network_df_4
-network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
+#network_with_hospital.to_excel('modelisation_files/network_with_hospital.xlsx', index=False)
 
 ##Modelisation
-graph = LinearGraph()
-graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
+##graph = LinearGraph()
+##graph.build_from_csv("modelisation_files/network_with_hospital.xlsx")
 
 ##Exploration et results
 ##Dealing with the hospital
@@ -60,16 +60,4 @@ final_network = final_network.rename(columns={'infra_type': 'infra_state'})
 pm = BrokenBuildings.from_dataframe(final_network)
 ranked_buildings = pm.simulate_fixing(verbose=True)
 ranked_buildings
-
-budget_phases = ranked_buildings['phase_cost']
-#sum the budget
-sum(budget_phases.values())
-#calculate the percentage for every phase
-for phase, budget in budget_phases.items():
-    print(f"Phase {phase}: {budget / sum(budget_phases.values()) * 100:.2f}%")
-time_phases = ranked_buildings['phase_time']
-#sum the time
-
-print(time_phases)
-sum(time_phases.values())
 
