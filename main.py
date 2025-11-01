@@ -60,4 +60,3 @@ final_network = final_network.rename(columns={'infra_type': 'infra_state'})
 pm = BrokenBuildings.from_dataframe(final_network)
 ranked_buildings = pm.simulate_fixing(verbose=True)
 ranked_buildings
-
